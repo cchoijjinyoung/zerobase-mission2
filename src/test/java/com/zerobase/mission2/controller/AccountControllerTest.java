@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zerobase.mission2.dto.AccountDto;
 import com.zerobase.mission2.dto.CreateAccount;
 import com.zerobase.mission2.dto.DeleteAccount;
+import com.zerobase.mission2.exception.AccountException;
 import com.zerobase.mission2.service.AccountService;
-import com.zerobase.mission2.service.RedisTestService;
+import com.zerobase.mission2.type.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.zerobase.mission2.domain.AccountStatus.IN_USE;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
@@ -30,9 +32,6 @@ class AccountControllerTest {
 
     @MockBean
     private AccountService accountService;
-
-    @MockBean
-    private RedisTestService redisTestService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -113,6 +112,22 @@ class AccountControllerTest {
                 .andExpect(jsonPath("$[1].balance").value(2000))
                 .andExpect(jsonPath("$[2].accountNumber").value("2222222222"))
                 .andExpect(jsonPath("$[2].balance").value(3000));;
+
+    }
+
+    @Test
+    void failGetAccount() throws Exception {
+        // given
+        given(accountService.getAccount(anyLong()))
+                .willThrow(new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+        // when
+
+        // then
+        mockMvc.perform(get("/account/876"))
+                .andDo(print())
+                .andExpect(jsonPath("$.errorCode").value("ACCOUNT_NOT_FOUND"))
+                .andExpect(jsonPath("$.errorMessage").value("계좌가 없습니다."))
+                .andExpect(status().isOk());
 
     }
 }

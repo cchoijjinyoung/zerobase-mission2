@@ -1,5 +1,6 @@
 package com.zerobase.mission2.dto;
 
+import com.zerobase.mission2.aop.AccountLockIdInterface;
 import com.zerobase.mission2.type.TransactionResultType;
 import lombok.*;
 
@@ -11,7 +12,7 @@ public class UseBalance {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Request {
+    public static class Request implements AccountLockIdInterface {
         @NotNull
         @Min(1)
         private Long userId;
