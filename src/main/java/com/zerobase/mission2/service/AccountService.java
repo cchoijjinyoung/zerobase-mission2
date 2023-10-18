@@ -52,23 +52,10 @@ public class AccountService {
         ));
     }
 
-    private AccountUser getAccountUser(Long userId) {
-        return accountUserRepository.findById(userId)
-                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
-    }
-
     private void validateCreateAccount(AccountUser accountUser) {
         if (accountRepository.countByAccountUser(accountUser) == 10) {
             throw new AccountException(MAX_ACCOUNT_PER_USER_10);
         }
-    }
-
-    @Transactional
-    public Account getAccount(Long id) {
-        if(id < 0){
-            throw new RuntimeException("Minus");
-        }
-        return accountRepository.findById(id).get();
     }
 
     @Transactional
@@ -111,5 +98,10 @@ public class AccountService {
         return accounts.stream()
                 .map(AccountDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    private AccountUser getAccountUser(Long userId) {
+        return accountUserRepository.findById(userId)
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
     }
 }

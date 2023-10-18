@@ -117,15 +117,15 @@ class AccountControllerTest {
     @Test
     void failGetAccount() throws Exception {
         // given
-        given(accountService.getAccount(anyLong()))
-                .willThrow(new AccountException(ErrorCode.ACCOUNT_NOT_FOUND));
+        given(accountService.getAccountsByUserId(anyLong()))
+                .willThrow(new AccountException(ErrorCode.USER_NOT_FOUND));
         // when
 
         // then
-        mockMvc.perform(get("/account/876"))
+        mockMvc.perform(get("/account?user_id=876"))
                 .andDo(print())
-                .andExpect(jsonPath("$.errorCode").value("ACCOUNT_NOT_FOUND"))
-                .andExpect(jsonPath("$.errorMessage").value("계좌가 없습니다."))
+                .andExpect(jsonPath("$.errorCode").value("USER_NOT_FOUND"))
+                .andExpect(jsonPath("$.errorMessage").value("사용자가 없습니다."))
                 .andExpect(status().isOk());
 
     }
