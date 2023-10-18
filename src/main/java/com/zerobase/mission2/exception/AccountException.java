@@ -1,6 +1,5 @@
 package com.zerobase.mission2.exception;
 
-import com.zerobase.mission2.domain.Account;
 import com.zerobase.mission2.type.ErrorCode;
 import lombok.*;
 
