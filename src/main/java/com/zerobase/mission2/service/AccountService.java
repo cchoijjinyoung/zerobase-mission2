@@ -1,13 +1,12 @@
 package com.zerobase.mission2.service;
 
 import com.zerobase.mission2.domain.Account;
-import com.zerobase.mission2.domain.AccountStatus;
+import com.zerobase.mission2.type.AccountStatus;
 import com.zerobase.mission2.domain.AccountUser;
 import com.zerobase.mission2.dto.AccountDto;
 import com.zerobase.mission2.exception.AccountException;
 import com.zerobase.mission2.repository.AccountRepository;
 import com.zerobase.mission2.repository.AccountUserRepository;
-import com.zerobase.mission2.type.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.zerobase.mission2.domain.AccountStatus.IN_USE;
+import static com.zerobase.mission2.type.AccountStatus.IN_USE;
 import static com.zerobase.mission2.type.ErrorCode.*;
 
 @Service
@@ -34,8 +33,7 @@ public class AccountService {
      */
     @Transactional
     public AccountDto createAccount(Long userId, Long initialBalance) {
-        AccountUser accountUser = accountUserRepository.findById(userId)
-                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+        AccountUser accountUser = getAccountUser(userId);
 
         validateCreateAccount(accountUser);
 
@@ -54,6 +52,11 @@ public class AccountService {
         ));
     }
 
+    private AccountUser getAccountUser(Long userId) {
+        return accountUserRepository.findById(userId)
+                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+    }
+
     private void validateCreateAccount(AccountUser accountUser) {
         if (accountRepository.countByAccountUser(accountUser) == 10) {
             throw new AccountException(MAX_ACCOUNT_PER_USER_10);
@@ -70,8 +73,7 @@ public class AccountService {
 
     @Transactional
     public AccountDto deleteAccount(Long userId, String accountNumber) {
-        AccountUser accountUser = accountUserRepository.findById(userId)
-                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+        AccountUser accountUser = getAccountUser(userId);
 
         Account account = accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new AccountException(ACCOUNT_NOT_FOUND));
@@ -102,8 +104,7 @@ public class AccountService {
 
     @Transactional
     public List<AccountDto> getAccountsByUserId(Long userId) {
-        AccountUser accountUser = accountUserRepository.findById(userId)
-                .orElseThrow(() -> new AccountException(USER_NOT_FOUND));
+        AccountUser accountUser = getAccountUser(userId);
 
         List<Account> accounts = accountRepository.findByAccountUser(accountUser);
 

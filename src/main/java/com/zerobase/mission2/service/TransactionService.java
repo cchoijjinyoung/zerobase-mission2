@@ -1,7 +1,7 @@
 package com.zerobase.mission2.service;
 
 import com.zerobase.mission2.domain.Account;
-import com.zerobase.mission2.domain.AccountStatus;
+import com.zerobase.mission2.type.AccountStatus;
 import com.zerobase.mission2.domain.AccountUser;
 import com.zerobase.mission2.domain.Transaction;
 import com.zerobase.mission2.dto.TransactionDto;
